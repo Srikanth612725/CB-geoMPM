@@ -1,0 +1,98 @@
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+======================================================================
+VALIDATION: STANDARD GEOTECHNICAL METHODS ON MPM DATA
+======================================================================
+
+Test case: Prandtl strip foundation
+  Foundation width: 5.0m
+  Soil strength: su = 6.0kPa
+  Expected (Prandtl): 154 kN/m (Nc = 5.14)
+  Settlement target: 150mm
+  Rate: 0.05 m/s (quasi-static)
+
+Creating MPM simulation (60x30 mesh)...
+MPM Solver initialized (GIMP=False)
+  Domain: 30m x 15m
+  Grid: 60x30 cells (0.500m x 0.500m)
+Added 4800 soil particles
+Added 40 foundation particles
+  Width: 5.00 m, Thickness: 0.50 m
+  Centroid: (15.00, 10.25) m
+  Particles: 4840
+
+Running MPM simulation...
+  Expected runtime: ~5-7 minutes
+
+  Step  1000 | s= 67.1mm | q=   76 kN/m | points=25
+  Step  2000 | s=134.2mm | q=  136 kN/m | points=50
+  Reached target at step 2237!
+
+Simulation complete in 8.8 minutes (526.6s)
+Data points collected: 56
+
+======================================================================
+APPLYING ALL STANDARD METHODS
+======================================================================
+
+Method                    Q_ult        Error      Settlement   Quality/Notes                 
+-----------------------------------------------------------------------------------------------
+chin_konder               281 kN/m     82.1%      N/A          Poor                          
+brinch_hansen             82 kN/m      46.7%      74.4mm       Good                          
+davisson                  161 kN/m     4.5%       150.1mm      No intersection found, using maximum load
+settlement_10_percent     N/A          N/A        N/A          Target settlement 500mm not reached (max: 150mm)
+fuller_hoy                62 kN/m      59.8%      59.0mm                                     
+maximum_load              161 kN/m     4.5%       150.1mm                                    
+
+Expected (Prandtl): 154 kN/m
+
+======================================================================
+ANALYSIS
+======================================================================
+
+✅ BEST METHOD: davisson
+   Q_ult = 161 kN/m
+   Error = 4.5%
+
+❌ WORST METHOD: chin_konder
+   Q_ult = 281 kN/m
+   Error = 82.1%
+
+📊 Comprehensive plot saved: standard_methods_validation.png
+
+======================================================================
+RECOMMENDATIONS FOR JOURNAL PUBLICATION
+======================================================================
+
+Methods ranked by accuracy:
+
+1. davisson
+   Q_ult: 161 kN/m | Error: 4.5% | ✅ Excellent
+
+2. maximum_load
+   Q_ult: 161 kN/m | Error: 4.5% | ✅ Excellent
+
+3. brinch_hansen
+   Q_ult: 82 kN/m | Error: 46.7% | ❌ Poor
+   Quality: Good
+
+4. fuller_hoy
+   Q_ult: 62 kN/m | Error: 59.8% | ❌ Poor
+
+5. chin_konder
+   Q_ult: 281 kN/m | Error: 82.1% | ❌ Poor
+   Quality: Poor
+
+🎯 RECOMMENDED FOR PUBLICATION: davisson
+   • Well-established method with peer-reviewed references
+   • Error: 4.5% (acceptable for MPM simulations)
+   • Q_ult: 161 kN/m
+
+======================================================================
+✅ VALIDATION COMPLETE
+======================================================================
+
+Total runtime: 8.8 minutes
+Data quality: 56 points over 150mm settlement

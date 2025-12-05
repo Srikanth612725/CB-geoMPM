@@ -1,0 +1,86 @@
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+======================================================================
+IMPROVED TANGENT METHOD TEST
+======================================================================
+Enhanced parameters for successful tangent intersection
+
+Test parameters:
+  Foundation: 5.0m wide
+  Soil: su = 6.0kPa
+  Expected (Prandtl): 154 kN/m
+  Rate: 0.05 m/s
+  Target: 120mm (INCREASED for better curve)
+  Mesh: 60x30 (FINER for accuracy)
+  Data points: Record every 50 steps (MORE data)
+  Inertial/Strength: 0.000667 (✅ QS)
+
+  Expected runtime: ~4-5 minutes
+  Expected data points: ~30-40
+
+Creating MPM simulation...
+MPM Solver initialized (GIMP=False)
+  Domain: 30m x 15m
+  Grid: 60x30 cells (0.500m x 0.500m)
+Added 4800 soil particles
+Added 40 foundation particles
+  Width: 5.00 m, Thickness: 0.50 m
+  Centroid: (15.00, 10.25) m
+  Particles: 4840 (soil: 4800, foundation: 40)
+
+Running improved simulation...
+  Step  400 | s= 26.8mm | q=   56 kN/m | points=8
+  Step  800 | s= 53.7mm | q=   70 kN/m | points=16
+  Step 1200 | s= 80.5mm | q=   87 kN/m | points=24
+  Step 1600 | s=107.3mm | q=  115 kN/m | points=32
+  Reached target at step 1789!
+
+Simulation complete in 6.8 minutes (405.6s)
+Data points collected: 36
+
+======================================================================
+COMPARING MAX vs TANGENT METHODS
+======================================================================
+
+1. MAX METHOD (baseline):
+   Ultimate load: 124 kN/m
+   At settlement: 117.4 mm
+   Error vs Prandtl: 19.5%
+
+2. TANGENT METHOD:
+   Ultimate load: 43 kN/m
+   At settlement: 22.8 mm
+   Method used: tangent_intersection
+   Error vs Prandtl: 71.8%
+   ✅ TANGENT SUCCESSFULLY APPLIED!
+   Initial slope: -614 kN/m²
+   Final slope: 828 kN/m²
+   R² initial: 0.013
+   R² final: 0.917
+
+======================================================================
+RESULTS SUMMARY
+======================================================================
+Expected (Prandtl theory): 154 kN/m
+MAX method result:         124 kN/m  (19.5% error)
+TANGENT method result:     43 kN/m  (71.8% error)
+
+Improvement: -52.4 percentage points
+
+📊 Plot saved: improved_tangent_test_results.png
+
+⏱️  Total time: 6.8 minutes (406.4s)
+
+======================================================================
+FINAL ASSESSMENT
+======================================================================
+
+⚠️  Max method more accurate for this case
+   Error: 19.5% (max) vs 71.8% (tangent)
+
+   Tangent method may not suit this load-settlement curve shape
+
+✅ IMPROVED TEST COMPLETE
+======================================================================
