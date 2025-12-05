@@ -149,6 +149,81 @@ bool mpm::MPMExplicit<Tdim>::solve() {
     // Map material properties to nodes
     contact_->compute_contact_forces();
 
+    // Compute bearing capacity from contact forces (if interface mode enabled)
+    if (interface_ && mpi_rank == 0) {
+      double bearing_capacity = 0.0;
+      double settlement = 0.0;
+      unsigned contact_nodes = 0;
+
+      // Get nodal properties handle from mesh
+      auto nodal_properties = mesh_->nodal_properties();
+
+      if (nodal_properties != nullptr) {
+        // Iterate over all nodes to find interface nodes
+        auto nodes = mesh_->nodes(-1);  // -1 = all nodes
+        for (auto node_itr = nodes.cbegin(); node_itr != nodes.cend(); ++node_itr) {
+          auto node = *node_itr;
+          // Get material IDs at this node
+          auto material_ids = node->material_ids();
+
+          // Check if node has both soil (material_id=0) and foundation (material_id=1)
+          if (material_ids.size() >= 2 &&
+              material_ids.find(0) != material_ids.end() &&
+              material_ids.find(1) != material_ids.end()) {
+
+            contact_nodes++;
+
+            // Get node ID and property ID
+            auto node_id = node->id();
+
+            // For 2D: Tdim=2, vertical direction is index 1 (y-direction)
+            // For 3D: Tdim=3, vertical direction is index 2 (z-direction)
+            const unsigned vertical_dir = (Tdim == 2) ? 1 : 2;
+
+            // Get change_in_momenta for both materials at this node
+            // Material 0 (soil) - we want the reaction from soil onto foundation
+            auto delta_p_soil = nodal_properties->property("change_in_momenta",
+                                                            node_id, 0, Tdim);
+
+            // Extract vertical component and convert impulse to force
+            // Force = impulse / dt
+            double force_from_soil = delta_p_soil(vertical_dir, 0) / dt_;
+
+            // Accumulate bearing capacity (absolute value, upward reaction)
+            bearing_capacity += std::abs(force_from_soil);
+
+            // Calculate average settlement from nodal displacements
+            auto displacement = nodal_properties->property("displacements",
+                                                            node_id, 1, Tdim);
+            settlement += std::abs(displacement(vertical_dir, 0));
+          }
+        }
+
+        // Calculate average settlement
+        if (contact_nodes > 0) {
+          settlement /= contact_nodes;
+        }
+
+        // Print bearing capacity and settlement
+        console_->info("Step: {}, Time: {:.6f}s, Contact nodes: {}, "
+                       "Bearing capacity: {:.2f} kN/m, Settlement: {:.6f} m",
+                       step_, step_ * dt_, contact_nodes,
+                       bearing_capacity / 1000.0,  // Convert N to kN
+                       settlement);
+
+        // Optional: Write to CSV file for post-processing
+        if (step_ == 0) {
+          std::ofstream bc_file("bearing_capacity.csv");
+          bc_file << "step,time,settlement,bearing_capacity,contact_nodes\n";
+          bc_file.close();
+        }
+        std::ofstream bc_file("bearing_capacity.csv", std::ios::app);
+        bc_file << step_ << "," << step_ * dt_ << "," << settlement << ","
+                << bearing_capacity / 1000.0 << "," << contact_nodes << "\n";
+        bc_file.close();
+      }
+    }
+
     // Update stress first
     mpm_scheme_->precompute_stress_strain(phase, pressure_smoothing_);
 
