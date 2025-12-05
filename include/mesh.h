@@ -464,6 +464,12 @@ class Mesh {
   // Initialise the nodal properties' map
   void initialise_nodal_properties();
 
+  //! Return nodal properties handle
+  //! \retval nodal_properties_ Shared pointer to nodal properties
+  std::shared_ptr<mpm::NodalProperties> nodal_properties() const {
+    return nodal_properties_;
+  }
+
  private:
   // Read particles from file
   //! \param[in] pset_id Set ID of the particles
