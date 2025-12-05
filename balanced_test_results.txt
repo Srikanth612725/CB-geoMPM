@@ -1,0 +1,40 @@
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+======================================================================
+BALANCED TANGENT METHOD TEST
+======================================================================
+Balanced parameters for reasonable speed + accuracy
+
+Test parameters:
+  Foundation: 5.0m wide
+  Soil: su = 6.0kPa
+  Expected (Prandtl): 154 kN/m
+  Rate: 0.05 m/s
+  Target: 80mm
+  Mesh: 50x25 (balanced)
+  Inertial/Strength: 0.000667 (✅ QS)
+  Expected steps: ~2,666
+  Expected time: ~2-4 minutes
+
+Creating MPM simulation...
+MPM Solver initialized (GIMP=False)
+  Domain: 30m x 15m
+  Grid: 50x25 cells (0.600m x 0.600m)
+Added 3300 soil particles
+Added 34 foundation particles
+  Width: 5.00 m, Thickness: 0.50 m
+  Centroid: (15.05, 10.30) m
+  Particles: 3334 (soil: 3300, foundation: 34)
+
+Running balanced simulation...
+  Step  300 | s=24.1mm | q=    0 kN/m
+  Step  600 | s=48.3mm | q=    0 kN/m
+  Step  900 | s=72.4mm | q=    0 kN/m
+  Reached target at step 994!
+
+Simulation complete in 2.6 minutes (158.3s)
+Data points collected: 14
+
+❌ ERROR: No valid load data!

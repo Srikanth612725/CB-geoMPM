@@ -1,0 +1,85 @@
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+======================================================================
+ULTRA-FAST TANGENT METHOD TEST
+======================================================================
+Using minimal parameters for 30-60 second completion
+
+Test parameters:
+  Foundation: 3.0m wide
+  Soil: su = 10.0kPa
+  Expected (Prandtl): 154 kN/m
+  Rate: 0.08 m/s
+  Target: 40mm
+  Inertial/Strength: 0.001024 (✅ QS)
+  Expected steps: ~833
+  Expected time: ~30-60 seconds
+
+Creating minimal MPM...
+MPM Solver initialized (GIMP=False)
+  Domain: 18m x 9m
+  Grid: 30x15 cells (0.600m x 0.600m)
+Added 1200 soil particles
+Added 10 foundation particles
+  Width: 3.00 m, Thickness: 0.30 m
+  Centroid: (9.00, 6.15) m
+  Particles: 1210 (soil: 1200, foundation: 10)
+
+Running ultra-fast simulation...
+  Step  200 | s=20.0mm | q=   59 kN/m
+  Step  400 | s=39.9mm | q=   89 kN/m
+  Reached target at step 401!
+
+Simulation complete in 24.3s
+Data points collected: 9
+
+======================================================================
+COMPARING MAX vs TANGENT METHODS
+======================================================================
+
+1. MAX METHOD (baseline):
+   Ultimate load: 89 kN/m
+   At settlement: 40.0 mm
+   Error vs Prandtl: 42.5%
+
+2. TANGENT METHOD (new):
+   Ultimate load: 89 kN/m
+   At settlement: 40.0 mm
+   Method used: max_value
+   Error vs Prandtl: 42.5%
+
+======================================================================
+RESULTS SUMMARY
+======================================================================
+Expected (Prandtl theory): 154 kN/m
+MAX method result:         89 kN/m  (42.5% error)
+TANGENT method result:     89 kN/m  (42.5% error)
+
+Improvement: 0.0 percentage points
+
+⚠️  MINIMAL CHANGE
+   Tangent method similar to max method
+
+📊 Plot saved: ultra_fast_tangent_test.png
+
+⏱️  Total time: 24.7s
+
+======================================================================
+GUIDANCE FOR NEXT STEPS
+======================================================================
+
+⚠️  Tangent method didn't help much in this test
+
+Possible reasons:
+1. Mesh too coarse (30x15) for proper load-settlement curve
+2. Settlement too small (40mm) to capture failure properly
+3. Prandtl test may not need tangent method
+
+Recommendations:
+1. Run test with FINER mesh (60x30)
+2. Run with MORE settlement (80-100mm)
+3. Test on Liu case specifically (more complex geometry)
+
+======================================================================

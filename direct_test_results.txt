@@ -1,0 +1,50 @@
+======================================================================
+DIRECT TANGENT METHOD VALIDATION
+======================================================================
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+
+Running Liu validation case with tangent method...
+Parameters:
+  su = 30 kPa
+  width = 6.84 m (Liu equivalent width)
+  rate = 0.10 m/s (10x faster, still quasi-static)
+  target = 0.10 m (100mm settlement)
+  mesh = 60x30 (coarser for speed)
+
+Expected runtime: ~2-3 minutes
+
+
+======================================================================
+OPTIMIZED SIMULATION SETUP
+======================================================================
+Material: su=30000Pa, E=15000.0kPa, nu=0.495, rho=1600kg/m3
+Foundation width: 6.84 m
+Domain: 41.04x20.0m
+Grid: 60x30
+Using GIMP: False
+MPM Solver initialized (GIMP=False)
+  Domain: 41.04m x 20.0m
+  Grid: 60x30 cells (0.684m x 0.667m)
+Added 5400 soil particles
+Added 40 foundation particles
+  Width: 6.84 m, Thickness: 0.50 m
+  Centroid: (20.52, 15.33) m
+
+Total particles: 5440 (5400 soil, 40 foundation)
+
+======================================================================
+ANALYTICAL VALIDATION
+======================================================================
+Prandtl theory (Nc=5.14): 10547 kN
+Liu et al. FEM result:    2522 kN
+Ratio (FEM/Theory):       0.24
+
+======================================================================
+BEARING CAPACITY TEST
+======================================================================
+Settlement rate: 0.1 m/s
+Target settlement: 0.1 m
+Timestep: 0.000358 s

@@ -1,0 +1,59 @@
+======================================================================
+SIMPLE VALIDATION TEST - Tangent Method
+======================================================================
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+
+Test case: Prandtl strip foundation
+  Foundation: 5.0m wide
+  Soil: su = 6.0kPa
+  Expected (Prandtl): 154 kN/m (Nc = 5.14)
+
+Setting up MPM simulation (small/fast)...
+MPM Solver initialized (GIMP=False)
+  Domain: 30m x 15m
+  Grid: 40x20 cells (0.750m x 0.750m)
+Added 2160 soil particles
+Added 13 foundation particles
+  Width: 5.00 m, Thickness: 0.50 m
+  Centroid: (14.94, 10.19) m
+  Particles: 2173
+
+Running simulation (1-2 minutes)...
+  Step  200 | s=40.2mm | q=44 kN/m
+  Reached target settlement!
+
+======================================================================
+COMPARING METHODS
+======================================================================
+
+1. MAX METHOD (old):
+   Q_ultimate: 44 kN/m
+   Error: 71.7%
+
+2. TANGENT METHOD (new):
+   Q_ultimate: 44 kN/m
+   Error: 71.7%
+   Method used: max_value
+
+======================================================================
+VALIDATION RESULTS
+======================================================================
+
+Expected (Prandtl):   154 kN/m
+MAX method:           44 kN/m (71.7% error)
+TANGENT method:       44 kN/m (71.7% error)
+
+Improvement: 0.0 percentage points
+
+⚠️  No significant improvement
+
+📊 Plot saved: tangent_validation_results.png
+
+======================================================================
+✅ VALIDATION COMPLETE!
+======================================================================
+
+⚠️  Consider additional calibration for better accuracy

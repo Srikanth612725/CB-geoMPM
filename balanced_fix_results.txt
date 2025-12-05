@@ -1,0 +1,86 @@
+======================================================================
+OPTIMIZED 2D MPM - A-SHAPED MAT FOUNDATION
+With Numba JIT and Improved Numerics
+======================================================================
+======================================================================
+BALANCED TANGENT METHOD TEST
+======================================================================
+Balanced parameters for reasonable speed + accuracy
+
+Test parameters:
+  Foundation: 5.0m wide
+  Soil: su = 6.0kPa
+  Expected (Prandtl): 154 kN/m
+  Rate: 0.05 m/s
+  Target: 80mm
+  Mesh: 50x25 (balanced)
+  Inertial/Strength: 0.000667 (✅ QS)
+  Expected steps: ~2,666
+  Expected time: ~2-4 minutes
+
+Creating MPM simulation...
+MPM Solver initialized (GIMP=False)
+  Domain: 30m x 15m
+  Grid: 50x25 cells (0.600m x 0.600m)
+Added 3300 soil particles
+Added 34 foundation particles
+  Width: 5.00 m, Thickness: 0.50 m
+  Centroid: (15.05, 10.30) m
+  Particles: 3334 (soil: 3300, foundation: 34)
+
+Running balanced simulation...
+  Step  300 | s=24.1mm | q=   31 kN/m
+  Step  600 | s=48.3mm | q=   96 kN/m
+  Step  900 | s=72.4mm | q=  100 kN/m
+  Reached target at step 994!
+
+Simulation complete in 2.6 minutes (155.7s)
+Data points collected: 14
+
+======================================================================
+COMPARING MAX vs TANGENT METHODS
+======================================================================
+
+1. MAX METHOD (baseline):
+   Ultimate load: 108 kN/m
+   At settlement: 12.1 mm
+   Error vs Prandtl: 29.9%
+
+2. TANGENT METHOD (new):
+   Ultimate load: 108 kN/m
+   At settlement: 12.1 mm
+   Method used: max_value
+   Error vs Prandtl: 29.9%
+
+======================================================================
+RESULTS SUMMARY
+======================================================================
+Expected (Prandtl theory): 154 kN/m
+MAX method result:         108 kN/m  (29.9% error)
+TANGENT method result:     108 kN/m  (29.9% error)
+
+Improvement: +0.0 percentage points
+
+⚠️  Tangent method fell back to 'max_value'
+   Need more data points or better curve shape
+
+📊 Plot saved: balanced_tangent_test_results.png
+
+⏱️  Total time: 2.6 minutes (156.3s)
+
+======================================================================
+INTERPRETATION & NEXT STEPS
+======================================================================
+
+⚠️  TANGENT METHOD NOT APPLIED
+   Method fell back to 'max_value' - insufficient data for tangent
+
+Recommendations:
+1. INCREASE settlement target (try 100-120mm)
+2. RECORD MORE DATA (reduce record_every from 75 to 50)
+3. REFINE MESH (try 60x30 instead of 50x25)
+4. Rerun test with these adjustments
+
+======================================================================
+✅ BALANCED TEST COMPLETE
+======================================================================
