@@ -161,7 +161,8 @@ bool mpm::MPMExplicit<Tdim>::solve() {
       if (nodal_properties != nullptr) {
         // Iterate over all nodes to find interface nodes
         auto nodes = mesh_->nodes(-1);  // -1 = all nodes
-        for (const auto& node : nodes) {
+        for (auto node_itr = nodes.cbegin(); node_itr != nodes.cend(); ++node_itr) {
+          auto node = *node_itr;
           // Get material IDs at this node
           auto material_ids = node->material_ids();
 
