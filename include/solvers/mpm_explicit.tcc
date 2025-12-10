@@ -238,6 +238,67 @@ bool mpm::MPMExplicit<Tdim>::solve() {
     // Update Stress Last
     mpm_scheme_->postcompute_stress_strain(phase, pressure_smoothing_);
 
+    // Compute bearing capacity from foundation particle stresses (prescribed velocity method)
+    // This works WITHOUT interface mode - measures reaction forces from particle stresses
+    if (!interface_ && mpi_rank == 0) {
+      double bearing_capacity = 0.0;
+      double settlement = 0.0;
+      unsigned foundation_particles = 0;
+
+      // For 3D: vertical stress is stress(2,0) = sigma_zz
+      // For 2D: vertical stress is stress(1,0) = sigma_yy
+      const unsigned vertical_dir = (Tdim == 2) ? 1 : 2;
+
+      // Iterate over all foundation particles (material_id = 1)
+      mesh_->iterate_over_particles(
+          [&](const std::shared_ptr<mpm::ParticleBase<Tdim>>& particle) {
+            // Check if this is a foundation particle (material_id = 1)
+            if (particle->material_id() == 1) {
+              foundation_particles++;
+
+              // Get particle stress (6 components)
+              auto stress = particle->stress();
+              double vertical_stress = stress(vertical_dir, 0);
+
+              // Get particle volume
+              double volume = particle->volume();
+
+              // Force = stress * volume (simplified - gives order of magnitude)
+              // More accurate would be stress * cross_sectional_area
+              double vertical_force = std::abs(vertical_stress) * volume;
+              bearing_capacity += vertical_force;
+
+              // Calculate settlement from particle displacement
+              auto displacement = particle->displacement();
+              double vertical_displacement = displacement(vertical_dir);
+              settlement += std::abs(vertical_displacement);
+            }
+          });
+
+      // Calculate average settlement
+      if (foundation_particles > 0) {
+        settlement /= foundation_particles;
+      }
+
+      // Print bearing capacity and settlement
+      console_->info("Step: {}, Time: {:.6f}s, Foundation particles: {}, "
+                     "Bearing capacity: {:.2f} kN, Settlement: {:.6f} m",
+                     step_, step_ * dt_, foundation_particles,
+                     bearing_capacity / 1000.0,  // Convert N to kN
+                     settlement);
+
+      // Write to CSV file for post-processing
+      if (step_ == 0) {
+        std::ofstream bc_file("bearing_capacity.csv");
+        bc_file << "step,time,settlement,bearing_capacity,foundation_particles\n";
+        bc_file.close();
+      }
+      std::ofstream bc_file("bearing_capacity.csv", std::ios::app);
+      bc_file << step_ << "," << step_ * dt_ << "," << settlement << ","
+              << bearing_capacity / 1000.0 << "," << foundation_particles << "\n";
+      bc_file.close();
+    }
+
     // Locate particles
     mpm_scheme_->locate_particles(this->locate_particles_);
 
